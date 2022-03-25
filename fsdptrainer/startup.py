@@ -73,7 +73,7 @@ def setup(config, rank, world_size, host, port, backend='nccl', local_rank=None,
     hq.init_global_dist(rank, world_size, backend, host, port)
 
 
-def get_trainer(model, criterion, optimizer, lr_scheduler, train_loader, test_loader ):
+def get_reactor(model, criterion, optimizer, lr_scheduler, train_loader, test_loader ):
     """ prepare model etc"""
 
     config = hq.config
@@ -90,9 +90,9 @@ def get_trainer(model, criterion, optimizer, lr_scheduler, train_loader, test_lo
 
     optimizer = optimizer(model.parameters())
 
-    trainer = Trainer(model=model, optimizer=optimizer, criterion=criterion)
+    reactor = Reactor(model=model, optimizer=optimizer, criterion=criterion)
 
-    return trainer, train_loader, test_loader
+    return reactor, train_loader, test_loader
 
 
 
