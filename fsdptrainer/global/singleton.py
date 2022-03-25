@@ -11,5 +11,8 @@ class Singleton(type):
 
             instance = super().__call__(*args, **kwargs)
             pClass.instances[pClass] = instance
+        #else:
+        #    cls._instances[cls].__init__(*args, **kwargs)
+
 
         return pClass.instances[pClass]
