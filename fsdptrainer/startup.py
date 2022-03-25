@@ -10,7 +10,7 @@ import argparse
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-from fsdptrainer.global import global_info as gt
+from fsdptrainer.global import global_info as hq
 
 from fsdptrainer.logging import get_dist_logger
 
@@ -25,14 +25,21 @@ def get_parser():
     parser.add_argument('--local_rank', type=int)
     return parser
 
-def configure(config, rank, world_size, host, port, backend='nccl', local_rank=None, seed=2022, verbose=True):
+def setup(config, rank, world_size, host, port, backend='nccl', local_rank=None, seed=2022, verbose=True):
 
-    gt.load_config(config)
-    gt.init_global_dist(rank, world_size, backend, host, port)
+
+    hq.load_config(config)
+    hq.init_global_dist(rank, world_size, backend, host, port)
 
     if torch.cuda.is_available():
-        gt.set_device(local_rank)
-    gt.set_seed(seed)
+        hq.set_device(local_rank)
+    hq.set_seed(seed)
 
-    
+    # main dist init
+    hq.init_global_dist(rank, world_size, backend, host, port)
+
+
+
+
+
     
