@@ -50,6 +50,14 @@ def setup(config, rank, world_size, host, port, backend='nccl', local_rank=None,
     3 - setup logging 
     """
 
+     #PyTorch env vars 
+     
+    rank = int(os.environ['RANK'])
+    local_rank = int(os.environ['LOCAL_RANK'])
+    world_size = int(os.environ['WORLD_SIZE'])
+    host = os.environ['MASTER_ADDR']
+    port = int(os.environ['MASTER_PORT'])
+    
     if isinstance(config, (str, Path)):
         config = Config.from_file(config)
 
@@ -75,9 +83,14 @@ def prepare(model, criterion, optimizer, lr_scheduler, train_loader, test_loader
 
     model = model().to(get_current_device())
 
+    model = FSDP(model,
+            fsdp_auto_wrap_policy=default_auto_wrap_policy,
+            cpu_offload=CPUOffload(offload_params=False)  # test cpu offload
+            )
+
     optimizer = optimizer(model.parameters())
 
-    #
+
 
 
 
