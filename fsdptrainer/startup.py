@@ -1,7 +1,7 @@
 
 # equivalent of main() for fsdpTrainer
 # read configs, set environment and ultimately launch training
-
+import torch
 import torch.distributed as dist
 import torch.multiprocessing as mp
 from torch.nn.parallel import DistributedDataParallel as DDP
@@ -51,7 +51,7 @@ def setup(config, rank, world_size, host, port, backend='nccl', local_rank=None,
     """
 
      #PyTorch env vars 
-     
+
     rank = int(os.environ['RANK'])
     local_rank = int(os.environ['LOCAL_RANK'])
     world_size = int(os.environ['WORLD_SIZE'])
@@ -73,7 +73,7 @@ def setup(config, rank, world_size, host, port, backend='nccl', local_rank=None,
     hq.init_global_dist(rank, world_size, backend, host, port)
 
 
-def prepare(model, criterion, optimizer, lr_scheduler, train_loader, test_loader ):
+def get_trainer(model, criterion, optimizer, lr_scheduler, train_loader, test_loader ):
     """ prepare model etc"""
 
     config = hq.config
@@ -89,6 +89,12 @@ def prepare(model, criterion, optimizer, lr_scheduler, train_loader, test_loader
             )
 
     optimizer = optimizer(model.parameters())
+
+    trainer = Trainer(model=model, optimizer=optimizer, criterion=criterion)
+
+    return trainer, train_loader, test_loader
+
+
 
 
 
